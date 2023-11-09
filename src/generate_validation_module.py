@@ -15,6 +15,10 @@ from rich.console import Console
 from validation.manager import Manager
 
 
+DEFAULT_TEMPLATE_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "templates", "validation"
+)
+
 DEFAULT_OUTDIR = os.path.join(
     "/tmp/",
     os.path.splitext(os.path.basename(__file__))[0],
@@ -83,6 +87,7 @@ def check_infile_status(infile: str = None, extension: str = None) -> bool:
     type=click.Path(exists=True),
     help=f"The configuration file for this project - default is '{DEFAULT_CONFIG_FILE}'",
 )
+@click.option("--file_type", help="The type of the file")
 @click.option("--infile", help="The primary input file")
 @click.option("--logfile", help="The log file")
 @click.option(
@@ -91,16 +96,22 @@ def check_infile_status(infile: str = None, extension: str = None) -> bool:
 )
 @click.option("--outfile", help="The output final report file")
 @click.option(
+    "--template_path",
+    help=f"The directory containing the Jinja2 template files - default is '{DEFAULT_TEMPLATE_PATH}'",
+)
+@click.option(
     "--verbose",
     is_flag=True,
     help=f"Will print more info to STDOUT - default is '{DEFAULT_VERBOSE}'",
 )
 def main(
     config_file: str,
+    file_type: str,
     infile: str,
     logfile: str,
     outdir: str,
     outfile: str,
+    template_path: str,
     verbose: bool,
 ):
     """Parse the file and generate the validation modules."""
@@ -127,6 +138,12 @@ def main(
         outdir = DEFAULT_OUTDIR
         console.print(
             f"[yellow]--outdir was not specified and therefore was set to '{outdir}'[/]"
+        )
+
+    if template_path is None:
+        template_path = DEFAULT_TEMPLATE_PATH
+        console.print(
+            f"[yellow]--template_path was not specified and therefore was set to '{template_path}'[/]"
         )
 
     if not os.path.exists(outdir):
@@ -158,8 +175,10 @@ def main(
     manager = Manager(
         config=config,
         config_file=config_file,
+        file_type=file_type,
         outdir=outdir,
         outfile=outfile,
+        template_path=template_path,
         verbose=verbose,
     )
 

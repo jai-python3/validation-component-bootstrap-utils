@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 import csv
+import re
 import logging
 import os
 import sys
@@ -18,9 +20,16 @@ class Manager:
         """Constructor for Manager."""
         self.config = kwargs.get("config", None)
         self.config_file = kwargs.get("config_file", None)
+        self.file_type = kwargs.get("file_type", None)
         self.logfile = kwargs.get("logfile", None)
         self.outdir = kwargs.get("outdir", None)
+        self.template_path = kwargs.get("template_path", None)
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
+
+        # Define a regular expression pattern to match special characters
+        self.pattern = r"[^a-zA-Z0-9\s]"  # This pattern will keep alphanumeric characters and whitespace
+
+        self.column_name_to_attribute_name_lookup = {}
 
         logging.info(
             f"Instantiated Manager in file '{os.path.abspath(__file__)}'"
@@ -79,7 +88,49 @@ class Manager:
         header_to_position_lookup = self._derive_column_headers_for_tsv_file(
             infile
         )
-        self._process_columns_for_tsv_file(infile, header_to_position_lookup)
+
+        self._generate_validator_class(header_to_position_lookup, infile)
+
+        # self._process_columns_for_tsv_file(infile, header_to_position_lookup)
+
+    def _generate_validator_class(
+        self, header_to_position_lookup: Dict[str, int], infile: str
+    ) -> None:
+        """TODO."""
+        # Specify the path to the templates directory
+        template_path = self.template_path
+
+        if not os.path.exists(template_path):
+            logging.error(f"template path '{template_path}' does not exist")
+            sys.exit(1)
+
+        # Create a FileSystemLoader and pass the template path to it
+        loader = FileSystemLoader(template_path)
+
+        # Create a Jinja2 Environment using the loader
+        env = Environment(loader=loader)
+
+        # Specify the name of the template file
+        template_name = "validator.py"
+
+        # Load the template
+        template = env.get_template(template_name)
+
+        # Create a dictionary with data to be passed to the template
+        lookup = {}
+
+        for column_name, column_position in header_to_position_lookup.items():
+            attribute_name = self.column_name_to_attribute_name_lookup[
+                column_name
+            ]
+            lookup[attribute_name] = column_position
+
+        data = {"field_lookup": lookup, "file_type": self.file_type}
+
+        # Render the template with the data
+        output = template.render(data)
+
+        print(output)
 
     def _process_columns_for_tsv_file(
         self, infile: str, header_to_position_lookup: Dict[str, int]
@@ -200,7 +251,7 @@ class Manager:
         """
         lookup = {}
         column_ctr = 0
-
+        column_name_to_attribute_name_lookup = {}
         with open(infile) as f:
             reader = csv.reader(f, delimiter="\t")
             row_ctr = 0
@@ -209,10 +260,29 @@ class Manager:
                 if row_ctr == 1:
                     for field in row:
                         lookup[field] = column_ctr
+                        attribute_name = self._derive_attribute_name(field)
+                        column_name_to_attribute_name_lookup[
+                            field
+                        ] = attribute_name
                         column_ctr += 1
                     logging.info(
                         f"Processed the header of .tsv file '{infile}'"
                     )
                     break
         logging.info(f"Found '{column_ctr}' columns in file '{infile}'")
+        self.column_name_to_attribute_name_lookup = (
+            column_name_to_attribute_name_lookup
+        )
         return lookup
+
+    def _derive_attribute_name(self, column_name: str) -> str:
+        """Derive the attribute name for the column name.
+
+        This will remove special characters and spaces and lowercase the string.
+        Args:
+            column_name (str): the column name
+        """
+        # Use re.sub to replace all matches with an empty string
+        attribute_name = re.sub(self.pattern, "", column_name)
+        attribute_name = attribute_name.lower().replace(" ", "")
+        return attribute_name
