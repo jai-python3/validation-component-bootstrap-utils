@@ -121,6 +121,10 @@ def main(
         error_console.print("--infile was not specified")
         error_ctr += 1
 
+    if file_type is None:
+        error_console.print("--file_type was not specified")
+        error_ctr += 1
+
     if error_ctr > 0:
         sys.exit(1)
 

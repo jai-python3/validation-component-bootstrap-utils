@@ -31,9 +31,26 @@ class Manager:
 
         self.column_name_to_attribute_name_lookup = {}
 
+        self._init_templating_system()
+
         logging.info(
             f"Instantiated Manager in file '{os.path.abspath(__file__)}'"
         )
+
+    def _init_templating_system(self) -> None:
+        """Initialize the Jinja2 templating loader and environment."""
+        # Specify the path to the templates directory
+        template_path = self.template_path
+
+        if not os.path.exists(template_path):
+            logging.error(f"template path '{template_path}' does not exist")
+            sys.exit(1)
+
+        # Create a FileSystemLoader and pass the template path to it
+        loader = FileSystemLoader(template_path)
+
+        # Create a Jinja2 Environment using the loader
+        self.env = Environment(loader=loader)
 
     def generate_validation_modules(self, infile: str) -> None:
         """Generate the validation modules for the specified file.
@@ -89,32 +106,16 @@ class Manager:
             infile
         )
 
-        self._generate_validator_class(header_to_position_lookup, infile)
+        # self._generate_validator_class(header_to_position_lookup, infile)
 
-        # self._process_columns_for_tsv_file(infile, header_to_position_lookup)
+        self._process_columns_for_tsv_file(infile, header_to_position_lookup)
 
     def _generate_validator_class(
         self, header_to_position_lookup: Dict[str, int], infile: str
     ) -> None:
         """TODO."""
-        # Specify the path to the templates directory
-        template_path = self.template_path
-
-        if not os.path.exists(template_path):
-            logging.error(f"template path '{template_path}' does not exist")
-            sys.exit(1)
-
-        # Create a FileSystemLoader and pass the template path to it
-        loader = FileSystemLoader(template_path)
-
-        # Create a Jinja2 Environment using the loader
-        env = Environment(loader=loader)
-
         # Specify the name of the template file
         template_name = "validator.py"
-
-        # Load the template
-        template = env.get_template(template_name)
 
         # Create a dictionary with data to be passed to the template
         lookup = {}
@@ -127,19 +128,39 @@ class Manager:
 
         data = {"field_lookup": lookup, "file_type": self.file_type}
 
-        # Render the template with the data
-        output = template.render(data)
+        output = self._generate_output_from_template(template_name, data)
 
-        print(output)
+        outfile = os.path.join(self.outdir, template_name)
+
+        self._write_class_file_from_template(
+            template_name, outfile, output, infile
+        )
 
     def _process_columns_for_tsv_file(
         self, infile: str, header_to_position_lookup: Dict[str, int]
     ) -> None:
         """TBD."""
+        lookup = {}
+
         for column_name, column_position in header_to_position_lookup.items():
+            attribute_name = self.column_name_to_attribute_name_lookup[
+                column_name
+            ]
             logging.info(
-                f"Processing column name '{column_name}' at column position '{column_position}'"
+                f"Processing column name '{column_name}' (with attribute name '{attribute_name}') at column position '{column_position}'"
             )
+
+            if attribute_name not in lookup:
+                class_name = self._derive_class_name_for_column_name(
+                    column_name
+                )
+
+                lookup[attribute_name] = {
+                    "datatype": "str",
+                    "column_name": column_name,
+                    "column_position": column_position + 1,
+                    "class_name": class_name,
+                }
 
             uniq_val_lookup = {}
             uniq_val_ctr = 0
@@ -170,6 +191,8 @@ class Manager:
                 uniq_val_lookup,
                 row_ctr,
             )
+
+        self._generate_record_class(lookup, infile)
 
     def _write_column_report_file(
         self,
@@ -281,8 +304,85 @@ class Manager:
         This will remove special characters and spaces and lowercase the string.
         Args:
             column_name (str): the column name
+        Returns:
+            str: the attribute name
         """
         # Use re.sub to replace all matches with an empty string
         attribute_name = re.sub(self.pattern, "", column_name)
         attribute_name = attribute_name.lower().replace(" ", "")
         return attribute_name
+
+    def _snake_to_upper_camel(self, class_name: str):
+        words = class_name.split("_")
+        camel_case_words = [word.capitalize() for word in words]
+        return "".join(camel_case_words)
+
+    def _derive_class_name_for_column_name(self, column_name: str) -> str:
+        """Derive the class name for the column name.
+
+        This will remove special characters and spaces.
+        Args:
+            column_name (str): the column name
+        Returns:
+            str: the class name
+        """
+        class_name = (
+            column_name.replace(" ", "_")
+            .replace("*", "")
+            .replace("#", "")
+            .replace("\\", "")
+            .replace("/", "_")
+            .replace("|", "_")
+            .replace("(", "_")
+            .replace(")", "_")
+        )
+
+        return self._snake_to_upper_camel(class_name)
+
+    def _generate_record_class(
+        self, lookup: Dict[str, Dict[str, str]], infile: str
+    ) -> None:
+        """TODO."""
+        # Specify the name of the template file
+        template_name = "record.py"
+
+        # Create a dictionary with data to be passed to the template
+        data = {"lookup": lookup, "file_type": self.file_type}
+
+        output = self._generate_output_from_template(template_name, data)
+
+        outfile = os.path.join(self.outdir, template_name)
+
+        self._write_class_file_from_template(
+            template_name, outfile, output, infile
+        )
+
+    def _generate_output_from_template(
+        self, template_name: str, data: Dict[str, Dict]
+    ) -> str:
+        """TODO."""
+        # Load the template
+        template = self.env.get_template(template_name)
+
+        # Render the template with the data
+        output = template.render(data)
+
+        return output
+
+    def _write_class_file_from_template(
+        self, template_name: str, outfile: str, output: str, infile: str
+    ) -> None:
+        with open(outfile, "w") as of:
+            of.write(f'""" method-created: {os.path.abspath(__file__)}\n')
+            of.write(
+                f"date-created: {str(datetime.today().strftime('%Y-%m-%d-%H%M%S'))}\n"
+            )
+            of.write(f"created-by: {os.environ.get('USER')}\n")
+            of.write(f"infile: {infile}\n")
+            of.write(f'logfile: {self.logfile}"""\n')
+
+            of.write(f"{output}\n")
+
+        logging.info(f"Wrote {template_name} file '{outfile}'")
+        if self.verbose:
+            print(f"Wrote {template_name} file '{outfile}'")
