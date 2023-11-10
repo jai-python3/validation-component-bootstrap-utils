@@ -50,15 +50,20 @@ repos:
   #   rev: v0.3.3 # Use the sha / tag you want to point at
   #   hooks:
   #     - id: pep257
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--filter-files"]
   # - repo: https://github.com/pycqa/isort
   #   rev: v5.10.1
   #   hooks:
   #     - id: isort
-  # - repo: https://github.com/asottile/pyupgrade
-  #   rev: v2.31.1
-  #   hooks:
-  #     - id: pyupgrade
-  #       args: [--py37-plus]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+    -   id: pyupgrade
+        args: [--py310-plus]
   - repo: https://github.com/asottile/dead
     rev: v1.4.0
     hooks:
