@@ -10,3 +10,4 @@ pydocstyle
 pylint
 rm_unneeded_f_str
 vulture
+pyupgrade
