@@ -17,10 +17,11 @@ Code for bootstrapping software modules for validating tab-delimited and comma-s
 4. Implement support to generate the [file_type]/validator.py<br>
 4.1. Should use jinja2 templating<br>
 
-## In-Progress
-
 5. Implement support to generate the [file_type]/record.py<br>
 5.1. Should use jinja2 templating<br>
 
+## In-Progress
+
+6. Implement support to generate the Enum classes.<br>
 
 ## To-Do

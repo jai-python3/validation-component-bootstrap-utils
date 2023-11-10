@@ -1,5 +1,8 @@
 [tool.black]
 line-length = 79
+exclude = """
+    /templates/validation/
+"""
 
 [tool.isort]
 line_length = 79

@@ -30,6 +30,7 @@ class Manager:
         self.pattern = r"[^a-zA-Z0-9\s]"  # This pattern will keep alphanumeric characters and whitespace
 
         self.column_name_to_attribute_name_lookup = {}
+        self.max_equality_values = self.config["max_equality_values"]
 
         self._init_templating_system()
 
@@ -141,6 +142,7 @@ class Manager:
     ) -> None:
         """TBD."""
         lookup = {}
+        enum_lookup = {}
 
         for column_name, column_position in header_to_position_lookup.items():
             attribute_name = self.column_name_to_attribute_name_lookup[
@@ -183,6 +185,15 @@ class Manager:
                             uniq_val_ctr += 1
                         uniq_val_lookup[val] += 1
 
+            if uniq_val_ctr <= self.max_equality_values:
+                logging.info(
+                    f"Will generate enum class for attribute '{attribute_name}' for column '{column_name}' because the max unique values is '{uniq_val_ctr}'"
+                )
+                class_name = lookup[attribute_name]["class_name"]
+                self._load_enum_lookup(
+                    uniq_val_lookup, enum_lookup, class_name
+                )
+
             self._write_column_report_file(
                 column_name,
                 column_position,
@@ -192,7 +203,30 @@ class Manager:
                 row_ctr,
             )
 
-        self._generate_record_class(lookup, infile)
+        self._generate_record_class(lookup, enum_lookup, infile)
+
+    def _load_enum_lookup(
+        self, uniq_val_lookup, enum_lookup, class_name
+    ) -> None:
+        """Load values into the enum lookup for this class.
+
+        Args:
+            TODO
+        """
+        if class_name not in enum_lookup:
+            enum_lookup[class_name] = {}
+
+        for val in uniq_val_lookup:
+            enum_name = self._derive_attribute_name(val)
+
+            enum_name = enum_name.upper()
+
+            if len(enum_name) == 1 or re.search(r"^\d", val):
+                enum_name = f"{class_name.upper()}_{val.upper()}"
+
+            logging.info(f"{enum_name=} {val=}")
+
+            enum_lookup[class_name][enum_name] = val
 
     def _write_column_report_file(
         self,
@@ -340,14 +374,21 @@ class Manager:
         return self._snake_to_upper_camel(class_name)
 
     def _generate_record_class(
-        self, lookup: Dict[str, Dict[str, str]], infile: str
+        self,
+        lookup: Dict[str, Dict[str, str]],
+        enum_lookup: Dict[str, Dict[str, str]],
+        infile: str,
     ) -> None:
         """TODO."""
         # Specify the name of the template file
         template_name = "record.py"
 
         # Create a dictionary with data to be passed to the template
-        data = {"lookup": lookup, "file_type": self.file_type}
+        data = {
+            "lookup": lookup,
+            "file_type": self.file_type,
+            "enum_lookup": enum_lookup,
+        }
 
         output = self._generate_output_from_template(template_name, data)
 

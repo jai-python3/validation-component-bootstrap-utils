@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import logging
 
@@ -13,6 +14,14 @@ import pydantic
 {{ attribute_name | upper }}_PATTERN = r'^$'
 {% endfor %}
 
+
+{% for enum_class_name in enum_lookup %}
+class {{ enum_class_name }}Enum(Enum):
+    """TODO: Insert docstring for this {{ enum_class_name }}Enum class."""
+    {%- for enum_name in enum_lookup[enum_class_name] %}
+    {{ enum_name }} = "{{ enum_lookup[enum_class_name][enum_name] }}"
+    {%- endfor %}
+{% endfor %}
 
 
 {% for attribute_name in lookup %}
