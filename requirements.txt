@@ -2,3 +2,4 @@ click
 colorama
 PyYAML
 Rich
+Jinja2
