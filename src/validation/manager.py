@@ -193,6 +193,9 @@ class Manager:
                 self._load_enum_lookup(
                     uniq_val_lookup, enum_lookup, class_name
                 )
+                lookup[attribute_name]["uniq_values"] = []
+                for uniq_val in uniq_val_lookup:
+                    lookup[attribute_name]["uniq_values"].append(uniq_val)
 
             self._write_column_report_file(
                 column_name,

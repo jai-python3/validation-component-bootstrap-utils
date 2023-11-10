@@ -58,6 +58,10 @@ class Record(pydantic.BaseModel):
         if value:
             # TODO: implement validation here
             return value
+        {%- for uniq_val in lookup[attribute_name].uniq_values %}
+        elif value == "{{ uniq_val }}":
+            return value
+        {%- endfor %}
         else:
             raise Invalid{{ lookup[attribute_name].class_name}}Error(value=value, message=f"{{ lookup[attribute_name].column_name }} (in column number {{ lookup[attribute_name].column_position }}) should ...  TODO")
 
