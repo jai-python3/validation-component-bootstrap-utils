@@ -8,7 +8,7 @@ import os
 import sys
 
 
-from typing import Dict
+from typing import Any, Dict, List
 
 DEFAULT_VERBOSE = False
 
@@ -166,6 +166,7 @@ class Manager:
 
             uniq_val_lookup = {}
             uniq_val_ctr = 0
+            uniq_val_list = []
 
             with open(infile) as f:
                 reader = csv.reader(f, delimiter="\t")
@@ -182,8 +183,16 @@ class Manager:
                         val = row[column_position]
                         if val not in uniq_val_lookup:
                             uniq_val_lookup[val] = 0
+                            uniq_val_list.append(val)
                             uniq_val_ctr += 1
                         uniq_val_lookup[val] += 1
+
+            datatype = self._determine_datatype(uniq_val_list)
+
+            if datatype == "different":
+                lookup[attribute_name]["datatype"] = "str"
+            else:
+                lookup[attribute_name]["datatype"] = datatype
 
             if uniq_val_ctr <= self.max_equality_values:
                 logging.info(
@@ -430,3 +439,83 @@ class Manager:
         logging.info(f"Wrote {template_name} file '{outfile}'")
         if self.verbose:
             print(f"Wrote {template_name} file '{outfile}'")
+
+    def _determine_datatype(self, values: List[Any]) -> str:
+        # Check if the array is not empty
+        if not values:
+            logging.error("values array is empty")
+            sys.exit(1)
+
+        first_value = values[0]
+        first_datatype = None
+        first_datatype_clean = None
+
+        if self._is_convertible_to_int(first_value):
+            first_value = int(first_value)
+            first_datatype = "int"
+            first_datatype_clean = "int"
+        elif self._is_convertible_to_float(first_value):
+            first_value = float(first_value)
+            first_datatype = "float"
+            first_datatype_clean = "float"
+        else:
+            # Get the datatype of the first element
+            first_datatype = type(first_value)
+            first_datatype_clean = str(type(values[0])).split("'")[1]
+
+        different = True
+
+        # Iterate through the array starting from the second element
+        for value in values[1:]:
+            current_datatype = None
+            # Check if the datatype of the current element matches the first datatype
+            if self._is_convertible_to_int(value):
+                value = int(value)
+                if first_datatype == "int":
+                    continue
+            elif self._is_convertible_to_float(value):
+                value = float(value)
+                if first_datatype == "float":
+                    continue
+
+            if type(value) != first_datatype:
+                logging.info(
+                    f"values does not have a consistent datatype. Expected {first_datatype}, but found {type(value)}."
+                )
+                return "different"
+
+        # If the loop completes without returning, all elements have the same datatype
+        logging.info(
+            f"All elements in the values array have the datatype: {first_datatype}"
+        )
+        return first_datatype_clean
+
+    def _is_convertible_to_int(self, value):
+        try:
+            # Try converting the string to an integer
+            int_value = int(value)
+            logging.info(
+                f"{value} can be safely converted into an integer value"
+            )
+            return True
+        except ValueError:
+            # Conversion failed
+            logging.info(
+                f"{value} cannot be safely converted into an integer value"
+            )
+            return False
+
+    def _is_convertible_to_float(self, value):
+        try:
+            # Try converting the string to a float
+            float_value = float(value)
+            logging.info(
+                f"{value} can be safely converted into an float value"
+            )
+            return True
+        except ValueError:
+            # Conversion failed
+            logging.info(
+                f"{value} cannot be safely converted into an float value"
+            )
+            return False

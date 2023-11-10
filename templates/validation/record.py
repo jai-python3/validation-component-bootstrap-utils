@@ -59,7 +59,11 @@ class Record(pydantic.BaseModel):
             # TODO: implement validation here
             return value
         {%- for uniq_val in lookup[attribute_name].uniq_values %}
+        {%- if lookup[attribute_name].datatype == "int" or lookup[attribute_name].datatype == "float" %}
+        elif value == {{ uniq_val }}:
+        {%- else %}
         elif value == "{{ uniq_val }}":
+        {%- endif %}
             return value
         {%- endfor %}
         else:

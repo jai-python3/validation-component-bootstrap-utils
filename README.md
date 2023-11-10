@@ -22,9 +22,12 @@ Code for bootstrapping software modules for validating tab-delimited and comma-s
 
 6. Implement support to generate the Enum classes.<br>
 
+7. Implement support to add the equality checks for the values in the classmethods.<br>
 
 ## In-Progress
 
-7. Implement support to add the equality checks for the values in the classmethods.<br>
-
 ## To-Do
+
+8. Implement support to determine the datatype of each column e.g.: int, float, str, bool<br>
+8.1. For integers and floats, determine the range of allowable values<br>
+8.2. For strings, determine the longest common prefix and the longest common suffix<br>
