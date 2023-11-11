@@ -105,3 +105,7 @@ repos:
   #     - id: isort
   #       files: "\\.(py)$"
   #       args: [--settings-path=pyproject.toml]
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.5
+    hooks:
+    -   id: python-bandit-vulnerability-check
