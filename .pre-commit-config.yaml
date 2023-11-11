@@ -1,3 +1,4 @@
+fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
@@ -11,7 +12,8 @@ repos:
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
-      - id: fix-encoding-pragma
+      # Disabling the fix-encoding-pragma because UTF-8 is assumed for Python 3
+      # - id: fix-encoding-pragma
       - id: mixed-line-ending
       - id: name-tests-test
       - id: pretty-format-json
@@ -20,7 +22,7 @@ repos:
       - id: sort-simple-yaml
       - id: trailing-whitespace
       - id: check-added-large-files
-
+    # files: ^(?!(templates/)).*
   # - repo: https://github.com/PyCQA/flake8
   #   rev: v4.0.1
   #   hooks:
@@ -34,18 +36,14 @@ repos:
       # Run the formatter.
       - id: ruff-format
   - repo: https://github.com/psf/black
-    rev: stable
+    rev: 23.11.0
     hooks:
       - id: black
-      # - language_version: python3.8
-  # - repo: https://github.com/psf/black
-  #   rev: 21.12b0
-  #   hooks:
-  #     - id: black
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.941
     hooks:
       - id: mypy
+        args: ['--ignore-missing-imports']
   # - repo: https://github.com/FalconSocial/pre-commit-mirrors-pep257
   #   rev: v0.3.3 # Use the sha / tag you want to point at
   #   hooks:
@@ -67,7 +65,8 @@ repos:
   - repo: https://github.com/asottile/dead
     rev: v1.4.0
     hooks:
-      -  id: dead
+      - id: dead
+        args: ['--exclude', 'templates/validation/']
   - repo:  https://github.com/milin/giticket
     rev: v1.3
     hooks:

@@ -1,19 +1,16 @@
-# -*- coding: utf-8 -*-
 """Parse the file and generate the validation modules."""
-import yaml
-from pathlib import Path
-import os
-import sys
-import click
-import pathlib
 import logging
-
-
+import os
+import pathlib
+import sys
 from datetime import datetime
+from pathlib import Path
+
+import click
+import yaml
 from rich.console import Console
 
 from validation.manager import Manager
-
 
 DEFAULT_TEMPLATE_PATH = os.path.join(
     os.path.dirname(__file__), "..", "templates", "validation"
@@ -43,7 +40,9 @@ error_console = Console(stderr=True, style="bold red")
 console = Console()
 
 
-def check_infile_status(infile: str = None, extension: str = None) -> bool:
+def check_infile_status(
+    infile: str | None = None, extension: str | None = None
+) -> None:
     """Check if the file exists, if it is a regular file and whether it has
     content.
 
@@ -81,29 +80,29 @@ def check_infile_status(infile: str = None, extension: str = None) -> bool:
         sys.exit(1)
 
 
-@click.command()
+@click.command()  # type: ignore
 @click.option(
     "--config_file",
     type=click.Path(exists=True),
     help=f"The configuration file for this project - default is '{DEFAULT_CONFIG_FILE}'",
-)
-@click.option("--file_type", help="The type of the file")
-@click.option("--infile", help="The primary input file")
-@click.option("--logfile", help="The log file")
+)  # type: ignore
+@click.option("--file_type", help="The type of the file")  # type: ignore
+@click.option("--infile", help="The primary input file")  # type: ignore
+@click.option("--logfile", help="The log file")  # type: ignore
 @click.option(
     "--outdir",
     help="The default is the current working directory - default is '{DEFAULT_OUTDIR}'",
-)
-@click.option("--outfile", help="The output final report file")
+)  # type: ignore
+@click.option("--outfile", help="The output final report file")  # type: ignore
 @click.option(
     "--template_path",
     help=f"The directory containing the Jinja2 template files - default is '{DEFAULT_TEMPLATE_PATH}'",
-)
+)  # type: ignore
 @click.option(
     "--verbose",
     is_flag=True,
     help=f"Will print more info to STDOUT - default is '{DEFAULT_VERBOSE}'",
-)
+)  # type: ignore
 def main(
     config_file: str,
     file_type: str,
@@ -113,7 +112,7 @@ def main(
     outfile: str,
     template_path: str,
     verbose: bool,
-):
+) -> None:
     """Parse the file and generate the validation modules."""
     error_ctr = 0
 
