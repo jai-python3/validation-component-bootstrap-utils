@@ -67,6 +67,10 @@ repos:
     hooks:
       - id: dead
         args: ['--exclude', 'templates/validation/']
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: 'v2.3'  # or any later Vulture version
+    hooks:
+      - id: vulture
   - repo:  https://github.com/milin/giticket
     rev: v1.3
     hooks:
@@ -81,11 +85,11 @@ repos:
       args: [-i]
       language: python
       types: [python]
-  # - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-  #   rev: v2.4.0
-  #   hooks:
-  #   - id: editorconfig-checker
-  #     alias: ec
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 2.7.2
+    hooks:
+    - id: editorconfig-checker
+      alias: ec
   - repo: https://github.com/dannysepler/rm_unneeded_f_str
     rev: v0.1.0
     hooks:
