@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-from jinja2 import Environment, FileSystemLoader
-from datetime import datetime
 import csv
-import re
 import logging
 import os
+import re
 import sys
-
-
+from datetime import datetime
 from typing import Any, Dict, List
+
+from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_VERBOSE = False
 
@@ -34,9 +33,7 @@ class Manager:
 
         self._init_templating_system()
 
-        logging.info(
-            f"Instantiated Manager in file '{os.path.abspath(__file__)}'"
-        )
+        logging.info(f"Instantiated Manager in file '{os.path.abspath(__file__)}'")
 
     def _init_templating_system(self) -> None:
         """Initialize the Jinja2 templating loader and environment."""
@@ -84,9 +81,7 @@ class Manager:
         Returns:
             None
         """
-        logging.error(
-            f"NOT YET IMPLEMENTED - unable to process .csv file '{infile}'"
-        )
+        logging.error(f"NOT YET IMPLEMENTED - unable to process .csv file '{infile}'")
         sys.exit(1)
 
     def _generate_validation_modules_for_tsv_file(self, infile: str) -> None:
@@ -103,9 +98,7 @@ class Manager:
 
         header_to_position_lookup = {}
 
-        header_to_position_lookup = self._derive_column_headers_for_tsv_file(
-            infile
-        )
+        header_to_position_lookup = self._derive_column_headers_for_tsv_file(infile)
 
         # self._generate_validator_class(header_to_position_lookup, infile)
 
@@ -122,9 +115,7 @@ class Manager:
         lookup = {}
 
         for column_name, column_position in header_to_position_lookup.items():
-            attribute_name = self.column_name_to_attribute_name_lookup[
-                column_name
-            ]
+            attribute_name = self.column_name_to_attribute_name_lookup[column_name]
             lookup[attribute_name] = column_position
 
         data = {"field_lookup": lookup, "file_type": self.file_type}
@@ -133,9 +124,7 @@ class Manager:
 
         outfile = os.path.join(self.outdir, template_name)
 
-        self._write_class_file_from_template(
-            template_name, outfile, output, infile
-        )
+        self._write_class_file_from_template(template_name, outfile, output, infile)
 
     def _process_columns_for_tsv_file(
         self, infile: str, header_to_position_lookup: Dict[str, int]
@@ -145,17 +134,13 @@ class Manager:
         enum_lookup = {}
 
         for column_name, column_position in header_to_position_lookup.items():
-            attribute_name = self.column_name_to_attribute_name_lookup[
-                column_name
-            ]
+            attribute_name = self.column_name_to_attribute_name_lookup[column_name]
             logging.info(
                 f"Processing column name '{column_name}' (with attribute name '{attribute_name}') at column position '{column_position}'"
             )
 
             if attribute_name not in lookup:
-                class_name = self._derive_class_name_for_column_name(
-                    column_name
-                )
+                class_name = self._derive_class_name_for_column_name(column_name)
 
                 lookup[attribute_name] = {
                     "datatype": "str",
@@ -199,9 +184,7 @@ class Manager:
                     f"Will generate enum class for attribute '{attribute_name}' for column '{column_name}' because the max unique values is '{uniq_val_ctr}'"
                 )
                 class_name = lookup[attribute_name]["class_name"]
-                self._load_enum_lookup(
-                    uniq_val_lookup, enum_lookup, class_name
-                )
+                self._load_enum_lookup(uniq_val_lookup, enum_lookup, class_name)
                 lookup[attribute_name]["uniq_values"] = []
                 for uniq_val in uniq_val_lookup:
                     lookup[attribute_name]["uniq_values"].append(uniq_val)
@@ -217,9 +200,7 @@ class Manager:
 
         self._generate_record_class(lookup, enum_lookup, infile)
 
-    def _load_enum_lookup(
-        self, uniq_val_lookup, enum_lookup, class_name
-    ) -> None:
+    def _load_enum_lookup(self, uniq_val_lookup, enum_lookup, class_name) -> None:
         """Load values into the enum lookup for this class.
 
         Args:
@@ -276,17 +257,13 @@ class Manager:
 
             for val, count in uniq_val_lookup.items():
                 percent = count / total_row_count * 100
-                of.write(
-                    f"value: '{val}'; count: {count}; percentage: {percent}\n"
-                )
+                of.write(f"value: '{val}'; count: {count}; percentage: {percent}\n")
 
         logging.info(f"Wrote column report file '{outfile}'")
         if self.verbose:
             print(f"Wrote column report file '{outfile}'")
 
-    def _derive_column_outfile(
-        self, column_name: str, column_position: int
-    ) -> str:
+    def _derive_column_outfile(self, column_name: str, column_position: int) -> str:
         """Derive the output file for the column-specific values.
 
         Args:
@@ -303,14 +280,10 @@ class Manager:
             .replace("(", "_")
             .replace(")", "_")
         )
-        outfile = os.path.join(
-            self.outdir, f"{column_position}_{basename}.tsv"
-        )
+        outfile = os.path.join(self.outdir, f"{column_position}_{basename}.tsv")
         return outfile
 
-    def _derive_column_headers_for_tsv_file(
-        self, infile: str
-    ) -> Dict[str, int]:
+    def _derive_column_headers_for_tsv_file(self, infile: str) -> Dict[str, int]:
         """Derive the column headers for the input .tsv file.
 
         Args:
@@ -330,18 +303,12 @@ class Manager:
                     for field in row:
                         lookup[field] = column_ctr
                         attribute_name = self._derive_attribute_name(field)
-                        column_name_to_attribute_name_lookup[
-                            field
-                        ] = attribute_name
+                        column_name_to_attribute_name_lookup[field] = attribute_name
                         column_ctr += 1
-                    logging.info(
-                        f"Processed the header of .tsv file '{infile}'"
-                    )
+                    logging.info(f"Processed the header of .tsv file '{infile}'")
                     break
         logging.info(f"Found '{column_ctr}' columns in file '{infile}'")
-        self.column_name_to_attribute_name_lookup = (
-            column_name_to_attribute_name_lookup
-        )
+        self.column_name_to_attribute_name_lookup = column_name_to_attribute_name_lookup
         return lookup
 
     def _derive_attribute_name(self, column_name: str) -> str:
@@ -406,9 +373,7 @@ class Manager:
 
         outfile = os.path.join(self.outdir, template_name)
 
-        self._write_class_file_from_template(
-            template_name, outfile, output, infile
-        )
+        self._write_class_file_from_template(template_name, outfile, output, infile)
 
     def _generate_output_from_template(
         self, template_name: str, data: Dict[str, Dict]
@@ -494,28 +459,20 @@ class Manager:
         try:
             # Try converting the string to an integer
             int_value = int(value)
-            logging.info(
-                f"{value} can be safely converted into an integer value"
-            )
+            logging.info(f"{value} can be safely converted into an integer value")
             return True
         except ValueError:
             # Conversion failed
-            logging.info(
-                f"{value} cannot be safely converted into an integer value"
-            )
+            logging.info(f"{value} cannot be safely converted into an integer value")
             return False
 
     def _is_convertible_to_float(self, value):
         try:
             # Try converting the string to a float
             float_value = float(value)
-            logging.info(
-                f"{value} can be safely converted into an float value"
-            )
+            logging.info(f"{value} can be safely converted into an float value")
             return True
         except ValueError:
             # Conversion failed
-            logging.info(
-                f"{value} cannot be safely converted into an float value"
-            )
+            logging.info(f"{value} cannot be safely converted into an float value")
             return False
