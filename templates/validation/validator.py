@@ -12,7 +12,7 @@ DEFAULT_VERBOSE = False
 
 
 class Validator:
-    """Class for validating files of type {{ file_type }}."""
+    """Class for validating files of type {{ data_file_type }}."""
 
     def __init__(self, **kwargs):
         """Constructor for Validator"""
@@ -31,7 +31,7 @@ class Validator:
         """Determine whether the file is valid.
 
         Args:
-            infile (str): the input file of type {{ file_type }} to be validated
+            infile (str): the input file of type {{ data_file_type }} to be validated
         Returns:
             bool: True if valid, False if not valid
         """

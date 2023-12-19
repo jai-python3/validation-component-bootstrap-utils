@@ -4,6 +4,8 @@ import logging
 import os
 import re
 import sys
+import pathlib
+
 from datetime import datetime
 from typing import Any, Dict, List
 
@@ -19,8 +21,9 @@ class Manager:
         """Constructor for Manager."""
         self.config = kwargs.get("config", None)
         self.config_file = kwargs.get("config_file", None)
-        self.file_type = kwargs.get("file_type", None)
+        self.data_file_type = kwargs.get("data_file_type", None)
         self.logfile = kwargs.get("logfile", None)
+        self.namespace = kwargs.get("namespace", None)
         self.outdir = kwargs.get("outdir", None)
         self.template_path = kwargs.get("template_path", None)
         self.verbose = kwargs.get("verbose", DEFAULT_VERBOSE)
@@ -100,14 +103,43 @@ class Manager:
 
         header_to_position_lookup = self._derive_column_headers_for_tsv_file(infile)
 
-        # self._generate_validator_class(header_to_position_lookup, infile)
-
+        self._generate_validator_class(header_to_position_lookup, infile)
+        self._generate_main_script(self.data_file_type, self.namespace, infile)
         self._process_columns_for_tsv_file(infile, header_to_position_lookup)
+
+    def _generate_main_script(self, data_file_type: str, namespace: str, infile: str) -> None:
+        """Generate the main script that will be used to execute the validation.
+
+        Args:
+            data_file_type (str): the type of data file to be processed
+            namespace (str): the namespace where the modules will be located
+            infile (str): the source input file that was used to generate this validation component
+        """
+        namespace_temp_dir = namespace.lower().replace(".", "_")
+        template_name = "validate_file.py"
+
+        lookup = {
+            "namespace": namespace,
+            "namespace_temp_dir": namespace_temp_dir,
+            "data_file_type": data_file_type
+        }
+
+        output = self._generate_output_from_template(template_name, lookup)
+
+        outfile = os.path.join(self.outdir, template_name)
+
+        self._write_class_file_from_template(template_name, outfile, output, infile)
 
     def _generate_validator_class(
         self, header_to_position_lookup: Dict[str, int], infile: str
     ) -> None:
-        """TODO."""
+        """Generate the validation module that will contain the Validator class that will drive the validation.
+
+        Args:
+            header_to_position_lookup (dict): key is the header name, value is the index position
+            infile (str): the source input file that was used to generate this validation component
+        """
+
         # Specify the name of the template file
         template_name = "validator.py"
 
@@ -118,11 +150,17 @@ class Manager:
             attribute_name = self.column_name_to_attribute_name_lookup[column_name]
             lookup[attribute_name] = column_position
 
-        data = {"field_lookup": lookup, "file_type": self.file_type}
+        data = {"field_lookup": lookup, "file_type": self.data_file_type}
 
         output = self._generate_output_from_template(template_name, data)
 
-        outfile = os.path.join(self.outdir, template_name)
+        namespace_dir = self.namespace.lower().replace(".", "/")
+        outdir = os.path.join(self.outdir, namespace_dir)
+        if not os.path.exists(outdir):
+            pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+            logging.info(f"Created output directory '{outdir}'")
+
+        outfile = os.path.join(outdir, template_name)
 
         self._write_class_file_from_template(template_name, outfile, output, infile)
 
@@ -365,13 +403,19 @@ class Manager:
         # Create a dictionary with data to be passed to the template
         data = {
             "lookup": lookup,
-            "file_type": self.file_type,
+            "file_type": self.data_file_type,
             "enum_lookup": enum_lookup,
         }
 
         output = self._generate_output_from_template(template_name, data)
 
-        outfile = os.path.join(self.outdir, template_name)
+        namespace_dir = self.namespace.lower().replace(".", "/")
+        outdir = os.path.join(self.outdir, namespace_dir)
+        if not os.path.exists(outdir):
+            pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+            logging.info(f"Created output directory '{outdir}'")
+
+        outfile = os.path.join(outdir, template_name)
 
         self._write_class_file_from_template(template_name, outfile, output, infile)
 
@@ -381,7 +425,6 @@ class Manager:
         """TODO."""
         # Load the template
         template = self.env.get_template(template_name)
-
         # Render the template with the data
         output = template.render(data)
 
@@ -397,7 +440,7 @@ class Manager:
             )
             of.write(f"created-by: {os.environ.get('USER')}\n")
             of.write(f"infile: {infile}\n")
-            of.write(f'logfile: {self.logfile}"""\n')
+            of.write(f'logfile: {self.logfile}\n"""\n')
 
             of.write(f"{output}\n")
 

@@ -1,4 +1,4 @@
-"""Parse the file and generate the validation modules."""
+"""Validate data file {{ data_file_type }}."""
 import logging
 import os
 import pathlib
@@ -10,20 +10,17 @@ import click
 import yaml
 from rich.console import Console
 
-from validation.manager import Manager
+from .{{ namespace }}.validator import Validator
 
-DEFAULT_TEMPLATE_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "templates", "validation"
-)
 
 DEFAULT_OUTDIR = os.path.join(
-    "/tmp/",
+    "/tmp/{{ namepace_temp_dir }}/",
     os.path.splitext(os.path.basename(__file__))[0],
     str(datetime.today().strftime("%Y-%m-%d-%H%M%S")),
 )
 
 DEFAULT_CONFIG_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "conf", "config.yaml"
+    os.path.dirname(os.path.abspath(__file__)), "conf", "config.yaml"
 )
 
 DEFAULT_LOGGING_FORMAT = (
@@ -86,19 +83,13 @@ def check_infile_status(
     type=click.Path(exists=True),
     help=f"The configuration file for this project - default is '{DEFAULT_CONFIG_FILE}'",
 )  # type: ignore
-@click.option("--data_file_type", help="Required: The type of the data files to be processed")  # type: ignore
 @click.option("--infile", help="The primary input file")  # type: ignore
 @click.option("--logfile", help="The log file")  # type: ignore
-@click.option("--namespace", help="Required: The namespace will dictate relative placement of the modules")  # type: ignore
 @click.option(
     "--outdir",
     help="The default is the current working directory - default is '{DEFAULT_OUTDIR}'",
 )  # type: ignore
 @click.option("--outfile", help="The output final report file")  # type: ignore
-@click.option(
-    "--template_path",
-    help=f"The directory containing the Jinja2 template files - default is '{DEFAULT_TEMPLATE_PATH}'",
-)  # type: ignore
 @click.option(
     "--verbose",
     is_flag=True,
@@ -106,28 +97,17 @@ def check_infile_status(
 )  # type: ignore
 def main(
     config_file: str,
-    data_file_type: str,
     infile: str,
     logfile: str,
-    namespace: str,
     outdir: str,
     outfile: str,
-    template_path: str,
     verbose: bool,
 ) -> None:
-    """Parse the file and generate the validation modules."""
+    """Validate data file {{ data_file_type }}."""
     error_ctr = 0
 
     if infile is None:
         error_console.print("--infile was not specified")
-        error_ctr += 1
-
-    if data_file_type is None:
-        error_console.print("--data_file_type was not specified")
-        error_ctr += 1
-
-    if namespace is None:
-        error_console.print("--namespace was not specified")
         error_ctr += 1
 
     if error_ctr > 0:
@@ -149,12 +129,6 @@ def main(
             f"[yellow]--outdir was not specified and therefore was set to '{outdir}'[/]"
         )
 
-    if template_path is None:
-        template_path = DEFAULT_TEMPLATE_PATH
-        console.print(
-            f"[yellow]--template_path was not specified and therefore was set to '{template_path}'[/]"
-        )
-
     if not os.path.exists(outdir):
         pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
 
@@ -167,8 +141,6 @@ def main(
         console.print(
             f"[yellow]--logfile was not specified and therefore was set to '{logfile}'[/]"
         )
-
-    logfile = os.path.abspath(logfile)
 
     logging.basicConfig(
         format=DEFAULT_LOGGING_FORMAT,
@@ -183,19 +155,18 @@ def main(
     logging.info("Will load contents of config file 'config_file'")
     config = yaml.safe_load(Path(config_file).read_text())
 
-    manager = Manager(
+    validator = Validator(
         config=config,
         config_file=config_file,
-        data_file_type=data_file_type,
-        logfile=logfile,
         outdir=outdir,
         outfile=outfile,
-        namespace=namespace,
-        template_path=template_path,
         verbose=verbose,
     )
 
-    manager.generate_validation_modules(infile=os.path.abspath(infile))
+    if validator.is_valid(infile):
+        console.print("The file is [bold green]valid[/]")
+    else:
+        console.print("The file is [bold red]NOT valid[/]")
 
     print(f"The log file is '{logfile}'")
     console.print(
