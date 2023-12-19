@@ -1,0 +1,5 @@
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	12345	rs567	A	G	50	PASS	DP=30;AF=0.2;AN=1000;CSQ=missense_variant|HIGH|GeneA|ENSG00000112345|transcriptA|ENST00000234567|protein_coding|1/10|c.123C>T|p.Arg41Trp|123/1000|ensembl
+2	56789	rs890	T	C	44	PASS	DP=25;AF=0.1;AN=1200;CSQ=synonymous_variant|MEDIUM|GeneB|ENSG00000123456|transcriptB|ENST00000345678|protein_coding|5/20|c.567A>G|p.Ala189Ala|567/1200|ensembl
+3	98765	rs123	G	T	60	PASS	DP=40;AF=0.3;AN=800;CSQ=splice_acceptor_variant|HIGH|GeneC|ENSG00000134567|transcriptC|ENST00000456789|protein_coding|2/15|c.987+1G>T|p.?|987/800|ensembl
+1	34567	rs456	C	A	55	PASS	DP=35;AF=0.15;AN=900;CSQ=frameshift_variant|HIGH|GeneX|ENSG00000145678|transcriptX|ENST00000567890|protein_coding|8/25|c.345_346insT|p.Leu116Phefs*12|345/900|ensembl
