@@ -1,0 +1,54 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>10</x><y>10</y><w>790</w><h>580</h></coordinates><panel_attributes>bg=green
+Manager
+
+--
+- config: Dict[str, Any]
+- config_file: str
+- data_file_type: str
+- logfile: str
+- namespace: str
+- outdir: str
+- template_path: str
+- verbose: bool
+- pattern: str
+- column_name_to_attribute_name_lookup: Dict[str, str]
+- max_equality_values: int
+--
+- _init_templating_system() -&gt; None
++ generate_validation_modules(infile: str) -&gt; None
+- _generate_validation_modules_for_csv_file(infile: str) -&gt; None
+- _generate_validation_modules_for_tsv_file(infile: str) -&gt; None
+- _generate_main_script(data_file_type: str, namespace: str, infile: str) -&gt; None
+- _generate_validator_class(header_to_position_lookup: Dict[str, int], infile: str) -&gt; None
+- _process_columns_for_tsv_file(infile: str, header_to_position_lookup: Dict[str, int]) -&gt; None
+- _load_enum_lookup(uniq_val_lookup, enum_lookup, class_name) -&gt; None
+- _write_column_report_file(column_name: str, column_position: int, infile: str, uniq_val_ctr: int, uniq_val_lookup: Dict, row_ctr: int) -&gt; None
+- _derive_column_outfile(column_name: str, column_position: int) -&gt; str
+- _derive_column_headers_for_tsv_file(infile: str) -&gt; Dict[str, int]
+- _derive_attribute_name(column_name: str) -&gt; str
+- _snake_to_upper_camel(class_name: str)
+- _derive_class_name_for_column_name(column_name: str) -&gt; str
+- _generate_record_class(lookup: Dict[str, Dict[str, str]], enum_lookup: Dict[str, Dict[str, str]], infile: str) -&gt; None
+- _generate_output_from_template(template_name: str, data: Dict[str, Dict]) -&gt; None
+- _write_class_file_from_template(template_name: str, outfile: str, output: str, infile: str) -&gt; None
+- _determine_datatype(values: List[Any]) -&gt; str
+- _is_convertible_to_int(value)
+- _is_convertible_to_float(value)
+--
+// dependencies:
+// import csv
+// import logging
+// import os
+// import re
+// import sys
+// import pathlib
+// from datetime import datetime
+// from typing import Any, Dict, List
+// from jinja2 import Environment, FileSystemLoader
+
+
+// constants:
+// DEFAULT_VERBOSE
+
+
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>

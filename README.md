@@ -99,7 +99,7 @@ Now you can install your package in your Python virtual environment
 pip install validation-component-bootstrap-utils
 ```
 
-![class diagrams](class_diagrams.png)
+![class diagrams](class_diagram.png)
 
 
 ## Exported scripts
