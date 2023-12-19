@@ -10,10 +10,10 @@ import click
 import yaml
 from rich.console import Console
 
-from validation.manager import Manager
+from .manager import Manager
 
 DEFAULT_TEMPLATE_PATH = os.path.join(
-    os.path.dirname(__file__), "..", "templates", "validation"
+    os.path.dirname(__file__), "templates", "validation"
 )
 
 DEFAULT_OUTDIR = os.path.join(
@@ -23,7 +23,7 @@ DEFAULT_OUTDIR = os.path.join(
 )
 
 DEFAULT_CONFIG_FILE = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "..", "conf", "config.yaml"
+    os.path.dirname(os.path.abspath(__file__)), "conf", "config.yaml"
 )
 
 DEFAULT_LOGGING_FORMAT = (
@@ -149,16 +149,31 @@ def main(
             f"[yellow]--outdir was not specified and therefore was set to '{outdir}'[/]"
         )
 
+    if not os.path.exists(outdir):
+        pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+        console.print(f"[yellow]Created output directory '{outdir}'[/]")
+
     if template_path is None:
         template_path = DEFAULT_TEMPLATE_PATH
         console.print(
             f"[yellow]--template_path was not specified and therefore was set to '{template_path}'[/]"
         )
 
-    if not os.path.exists(outdir):
-        pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+    if not os.path.exists(template_path):
+        console.print(
+            f"[bold red]template_path '{template_path}' does not exist[/]"
+        )
+        sys.exit(1)
 
-        console.print(f"[yellow]Created output directory '{outdir}'[/]")
+    if not os.path.isdir(template_path):
+        console.print(
+            f"[bold red]template_path '{template_path}' is not a regular directory[/]"
+        )
+        sys.exit(1)
+
+    if verbose is None:
+        verbose = DEFAULT_VERBOSE
+        console.print(f"[yellow]--verbose was not specified and therefore was set to '{verbose}'[/]")
 
     if logfile is None:
         logfile = os.path.join(

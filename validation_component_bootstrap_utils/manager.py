@@ -11,7 +11,7 @@ from typing import Any, Dict, List
 
 from jinja2 import Environment, FileSystemLoader
 
-DEFAULT_VERBOSE = False
+DEFAULT_VERBOSE = True
 
 
 class Manager:

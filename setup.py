@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', ]
+requirements = ['Click>=7.0', "PyYAML"]
 
 test_requirements = [ ]
 
@@ -30,7 +30,7 @@ setup(
     description="Utilities for Bootstrapping Validation Components",
     entry_points={
         'console_scripts': [
-            'validation_component_bootstrap_utils=validation_component_bootstrap_utils.cli:main',
+            'bootstrap-validation-component=validation_component_bootstrap_utils.generate_validation_module:main',
         ],
     },
     install_requires=requirements,
@@ -39,9 +39,17 @@ setup(
     keywords='validation_component_bootstrap_utils',
     name='validation_component_bootstrap_utils',
     packages=find_packages(include=['validation_component_bootstrap_utils', 'validation_component_bootstrap_utils.*']),
+    package_data={
+        "validation_component_bootstrap_utils": [
+            "conf/config.yaml",
+            "templates/validation/record.py",
+            "templates/validation/validate_file.py",
+            "templates/validation/validator.py",
+        ]
+    },
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/jai-python3/validation_component_bootstrap_utils',
-    version='0.1.0',
+    version='0.2.0',
     zip_safe=False,
 )

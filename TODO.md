@@ -1,4 +1,3 @@
-- refactor profiling module
-- unit tests (pytest)
-- use case diagram
 - class diagram
+- support for deriving the datatype (integer, float, string, boolean)
+- unit tests (pytest)

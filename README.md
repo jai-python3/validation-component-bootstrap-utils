@@ -1,13 +1,12 @@
-# TBD
-TBD
+# validation-component-bootstrap-utils
+Collection of scripts and utilities for bootstrapping validation components.
 
-- [TBD](#tbd)
+- [validation-component-bootstrap-utils](#validation-component-bootstrap-utils)
   - [Motivation](#motivation)
   - [Improvements](#improvements)
   - [Use Cases](#use-cases)
   - [Installation](#installation)
     - [Developers](#developers)
-  - [Usage](#usage)
   - [Exported scripts](#exported-scripts)
   - [Contributing](#contributing)
   - [To-Do/Coming Next](#to-docoming-next)
@@ -18,9 +17,10 @@ TBD
 
 ## Motivation
 
-Explain what the motivation was for developing this package OR<br>
-explain how this package was improved after being forked.
-
+This will help to auto-generate some amount of boilerplate code including the following:
+- record.py which contains a Pydantic Record class
+- validator.py which contains a non-Pydantic Validation class
+- validate_files.py which will be the primary driver of the generated validation software component
 
 ## Improvements
 
@@ -37,8 +37,8 @@ Please see the [TODO](TODO.md) for a list of upcoming improvements.
 Clone this project and then run the pip installer
 
 ```bash
-git clone https://github.com/jai-python3/TBD.git
-cd TBD
+git clone https://github.com/jai-python3/validation-component-bootstrap-utils.git
+cd validation-component-bootstrap-utils
 virtualenv -p python3 venv
 source venv/bin/activate
 python setup.py sdist
@@ -48,7 +48,7 @@ pip install .
 You can uninstall like this:
 
 ```bash
-pip uninstall TBD
+pip uninstall validation-component-bootstrap-utils
 make clean
 ```
 
@@ -57,7 +57,7 @@ make clean
 If you modify the code in this package in your local virtual environment:
 
 ```shell
-pip uninstall TBD
+pip uninstall validation-component-bootstrap-utils
 make clean
 python setup.py sdist
 pip install .
@@ -96,39 +96,44 @@ twine upload dist/*
 Now you can install your package in your Python virtual environment
 
 ```shell
-pip install tbd
+pip install validation-component-bootstrap-utils
 ```
-
-
 
 ![class diagrams](class_diagrams.png)
 
-## Usage
-
-```python
-import TBD
-
-config_file = "conf/config.yaml"
-config = yaml.safe_load(Path(config_file).read_text())
-
-tbd = TBD(
-    config=config,
-    config_file=config_file,
-    logfile=logfile,
-    outdir=outdir,
-    outfile=outfile,
-    verbose=verbose,
-)
-
-tbd.tbd()
-```
 
 ## Exported scripts
 
-To use the exported script for ... :
+To use the exported script `bootstrap-validation-component`.
+
+For example:
 
 ```bash
-
+bootstrap-validation-component  --infile examples/sample.tsv --data_file_type VCF --namespace su.vcf --verbose                           
+--config_file was not specified and therefore was set to 
+'/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/conf/conf
+ig.yaml'
+--outdir was not specified and therefore was set to '/tmp/generate_validation_module/2023-12-19-123510'
+Created output directory '/tmp/generate_validation_module/2023-12-19-123510'
+--template_path was not specified and therefore was set to 
+'/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/templates
+/validation'
+--logfile was not specified and therefore was set to '/tmp/generate_validation_module/2023-12-19-123510/generate_validation_module.log'
+Wrote validator.py file '/tmp/generate_validation_module/2023-12-19-123510/su/vcf/validator.py'
+Wrote validate_file.py file '/tmp/generate_validation_module/2023-12-19-123510/validate_file.py'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/0_#CHROM.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/1_POS.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/2_ID.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/3_REF.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/4_ALT.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/5_QUAL.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/6_FILTER.tsv'
+Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/7_INFO.tsv'
+Wrote record.py file '/tmp/generate_validation_module/2023-12-19-123510/su/vcf/record.py'
+The log file is '/tmp/generate_validation_module/2023-12-19-123510/generate_validation_module.log'
+Execution of 
+'/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/generate_
+validation_module.py' completed
 ```
 
 ## Contributing
