@@ -7,6 +7,7 @@ Collection of scripts and utilities for bootstrapping validation components.
   - [Use Cases](#use-cases)
   - [Installation](#installation)
     - [Developers](#developers)
+  - [Class Diagrams](#class-diagrams)
   - [Exported scripts](#exported-scripts)
   - [Contributing](#contributing)
   - [To-Do/Coming Next](#to-docoming-next)
@@ -98,6 +99,10 @@ Now you can install your package in your Python virtual environment
 ```shell
 pip install validation-component-bootstrap-utils
 ```
+
+## Class Diagrams
+
+Here is the class diagram:
 
 ![class diagrams](class_diagram.png)
 
