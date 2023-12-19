@@ -29,7 +29,7 @@ Please see the [TODO](TODO.md) for a list of upcoming improvements.
 
 ## Use Cases
 
-![use case diagram](use_case.png)
+![use case diagram](use_cases.png)
 
 
 ## Installation
