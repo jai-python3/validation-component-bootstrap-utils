@@ -1,3 +1,8 @@
+## [v0.2.1](https://github.com/jai-python3/validation-component-bootstrap-utils/tree/v0.2.1) - 2023-12-19
+
+ADDS:
+- missing dependencies
+
 ## [v0.2.0](https://github.com/jai-python3/validation-component-bootstrap-utils/tree/v0.2.0) - 2023-12-19
 
 ADDS:
