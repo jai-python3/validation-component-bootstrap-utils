@@ -45,6 +45,7 @@ setup(
             "templates/validation/record.py",
             "templates/validation/validate_file.py",
             "templates/validation/validator.py",
+            "templates/validation/parser.py",
         ]
     },
     test_suite='tests',

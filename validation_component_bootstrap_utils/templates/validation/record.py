@@ -47,7 +47,7 @@ class Record(pydantic.BaseModel):
     def is_record_valid(cls, values) -> None:
         # TODO: need to implement the root validator
         # raise InvalidRecordError(message="")
-        pass
+        return values
 
     {% for attribute_name in lookup %}
 

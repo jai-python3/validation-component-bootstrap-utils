@@ -104,6 +104,7 @@ class Manager:
         header_to_position_lookup = self._derive_column_headers_for_tsv_file(infile)
 
         self._generate_validator_class(header_to_position_lookup, infile)
+        self._generate_parser_class(header_to_position_lookup, infile)
         self._generate_main_script(self.data_file_type, self.namespace, infile)
         self._process_columns_for_tsv_file(infile, header_to_position_lookup)
 
@@ -142,6 +143,40 @@ class Manager:
 
         # Specify the name of the template file
         template_name = "validator.py"
+
+        # Create a dictionary with data to be passed to the template
+        lookup = {}
+
+        for column_name, column_position in header_to_position_lookup.items():
+            attribute_name = self.column_name_to_attribute_name_lookup[column_name]
+            lookup[attribute_name] = column_position
+
+        data = {"field_lookup": lookup, "file_type": self.data_file_type}
+
+        output = self._generate_output_from_template(template_name, data)
+
+        namespace_dir = self.namespace.lower().replace(".", "/")
+        outdir = os.path.join(self.outdir, namespace_dir)
+        if not os.path.exists(outdir):
+            pathlib.Path(outdir).mkdir(parents=True, exist_ok=True)
+            logging.info(f"Created output directory '{outdir}'")
+
+        outfile = os.path.join(outdir, template_name)
+
+        self._write_class_file_from_template(template_name, outfile, output, infile)
+
+    def _generate_parser_class(
+        self, header_to_position_lookup: Dict[str, int], infile: str
+    ) -> None:
+        """Generate the parser module that will contain the Parser class that will provide a way to parse/read the file.
+
+        Args:
+            header_to_position_lookup (dict): key is the header name, value is the index position
+            infile (str): the source input file that was used to generate this parser.py file/module
+        """
+
+        # Specify the name of the template file
+        template_name = "parser.py"
 
         # Create a dictionary with data to be passed to the template
         lookup = {}
