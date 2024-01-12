@@ -49,7 +49,7 @@ setup(
     },
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/jai-python3/validation_component_bootstrap_utils',
+    url='https://github.com/jai-python3/validation-component-bootstrap-utils',
     version='0.2.1',
     zip_safe=False,
 )
