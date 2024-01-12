@@ -8,6 +8,8 @@ Collection of scripts and utilities for bootstrapping validation components.
   - [Installation](#installation)
     - [Developers](#developers)
   - [Class Diagrams](#class-diagrams)
+  - [Installation](#installation-1)
+  - [Generate shell wrapper scripts](#generate-shell-wrapper-scripts)
   - [Exported scripts](#exported-scripts)
   - [Contributing](#contributing)
   - [To-Do/Coming Next](#to-docoming-next)
@@ -105,6 +107,18 @@ pip install validation-component-bootstrap-utils
 Here is the class diagram:
 
 ![class diagrams](class_diagram.png)
+
+## Installation
+
+Please see the [INSTALL](INSTALL.md) guide for instructions.
+
+## Generate shell wrapper scripts
+
+After executing `pip install validation-component-bootstrap-utils`, execute this exported script: `make_executables_and_aliases.py`.<br>
+This will create the wrapper shell scripts and a file containing aliases named `validation-component-bootstrap-utils-aliases.txt` in the current directory.<br><br>
+You can then add this line to your .bashrc or .zshrc:<br>
+`source dir/validation-component-bootstrap-utils-aliases.txt`<br>
+where dir is the directory that contains the aliases file.
 
 
 ## Exported scripts

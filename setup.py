@@ -48,6 +48,7 @@ setup(
             "templates/validation/parser.py",
         ]
     },
+    scripts=["scripts/make_executables_and_aliases.py"],
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/jai-python3/validation-component-bootstrap-utils',
