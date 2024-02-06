@@ -288,6 +288,18 @@ class Manager:
 
             logging.info(f"{enum_name=} {val=}")
 
+            enum_name = (
+                enum_name.replace(" ", "")
+                .replace("*", "")
+                .replace("\\", "")
+                .replace("/", "_")
+                .replace("|", "_")
+                .replace("(", "_")
+                .replace(")", "_")
+                .replace(".", "_")
+                .replace("-", "_")
+            )
+
             enum_lookup[class_name][enum_name] = val
 
     def _write_column_report_file(
