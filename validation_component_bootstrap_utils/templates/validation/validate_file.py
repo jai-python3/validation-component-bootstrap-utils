@@ -14,7 +14,9 @@ from .{{ namespace }}.validator import Validator
 
 
 DEFAULT_OUTDIR = os.path.join(
-    "/tmp/{{ namepace_temp_dir }}/",
+    "/tmp",
+    "{{ namespace_temp_dir }}",
+    os.getenv("USER"),
     os.path.splitext(os.path.basename(__file__))[0],
     str(datetime.today().strftime("%Y-%m-%d-%H%M%S")),
 )

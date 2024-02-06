@@ -105,7 +105,7 @@ class Manager:
             namespace (str): the namespace where the modules will be located
             infile (str): the source input file that was used to generate this validation component
         """
-        namespace_temp_dir = namespace.lower().replace(".", "_")
+        namespace_temp_dir = f"{namespace.lower().replace('.', '-')}-validator"
         template_name = "validate_file.py"
 
         lookup = {
