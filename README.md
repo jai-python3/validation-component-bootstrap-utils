@@ -6,7 +6,6 @@ Collection of scripts and utilities for bootstrapping validation components.
   - [Improvements](#improvements)
   - [Use Cases](#use-cases)
   - [Installation](#installation)
-    - [Developers](#developers)
   - [Class Diagrams](#class-diagrams)
   - [Installation](#installation-1)
   - [Generate shell wrapper scripts](#generate-shell-wrapper-scripts)
@@ -27,7 +26,7 @@ This will help to auto-generate some amount of boilerplate code including the fo
 
 ## Improvements
 
-Please see the [TODO](TODO.md) for a list of upcoming improvements.
+Please see the [TODO](docs/TODO.md) for a list of upcoming improvements.
 
 
 ## Use Cases
@@ -37,70 +36,7 @@ Please see the [TODO](TODO.md) for a list of upcoming improvements.
 
 ## Installation
 
-Clone this project and then run the pip installer
-
-```bash
-git clone https://github.com/jai-python3/validation-component-bootstrap-utils.git
-cd validation-component-bootstrap-utils
-virtualenv -p python3 venv
-source venv/bin/activate
-python setup.py sdist
-pip install .
-```
-
-You can uninstall like this:
-
-```bash
-pip uninstall validation-component-bootstrap-utils
-make clean
-```
-
-### Developers
-
-If you modify the code in this package in your local virtual environment:
-
-```shell
-pip uninstall validation-component-bootstrap-utils
-make clean
-python setup.py sdist
-pip install .
-```
-
-If you want to export the code in this package to the PYPI repository:
-
-Install `twine` and `setuptools`:
-
-```shell
-pip install twine setuptools
-```
-
-
-Build the Distribution Package
-
-```shell
-python setup.py sdist bdist_wheel
-```
-
-Configure your ~/.pypirc:
-
-```bash
-[pypi]
-  username = __token__
-  password = pypi-YOUR-TOKEN
-```
-
-Upload Your Package to PyPI
-
-```shell
-twine upload dist/*
-```
-
-
-Now you can install your package in your Python virtual environment
-
-```shell
-pip install validation-component-bootstrap-utils
-```
+See this [documentation](docs/INSTALL.md) for instructions.
 
 ## Class Diagrams
 
@@ -110,7 +46,7 @@ Here is the class diagram:
 
 ## Installation
 
-Please see the [INSTALL](INSTALL.md) guide for instructions.
+Please see the [INSTALL](docs/INSTALL.md) guide for instructions.
 
 ## Generate shell wrapper scripts
 
@@ -162,12 +98,12 @@ to discuss what you would like to change.
 
 ## To-Do/Coming Next
 
-Please view the listing of planned improvements [here](TODO.md).
+Please view the listing of planned improvements [here](docs/TODO.md).
 
 ## CHANGELOG
 
-Please view the CHANGELOG [here](CHANGELOG.md).
+Please view the CHANGELOG [here](docs/CHANGELOG.md).
 
 ## License
 
-[GNU AFFERO GENERAL PUBLIC LICENSE](LICENSE)
+[GNU AFFERO GENERAL PUBLIC LICENSE](docs/LICENSE)

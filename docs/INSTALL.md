@@ -1,6 +1,14 @@
 # INSTALL
 
-### Clone project
+## Install from PYPI
+
+Now you can install your package in your Python virtual environment
+
+```shell
+pip install validation-component-bootstrap-utils
+```
+
+## Clone project
 
 You can `git clone` this project.
 
@@ -9,7 +17,7 @@ git clone https://github.com/jai-python3/validation-component-bootstrap-utils.gi
 cd validation-component-bootstrap-utils
 ```
 
-### Local pip install
+## Local pip install
 
 You can optionally establish a Python virtual environment.
 Then you can run the `setup.py` script to build to project and then run `pip install`<br>
@@ -22,7 +30,7 @@ python setup.py sdist
 pip install .
 ```
 
-### Uninstall
+## Uninstall
 
 You can uninstall like this:
 
@@ -32,7 +40,7 @@ pip uninstall validation-component-bootstrap-utils
 make clean
 ```
 
-### Developers
+## Developers
 
 If you modify the code in this package in your local virtual environment:
 
@@ -74,14 +82,3 @@ python setup.py sdist bdist_wheel
 ```shell
 twine upload dist/*
 ```
-
-### Install from PYPI
-
-Now you can install your package in your Python virtual environment
-
-```shell
-pip install validation-component-bootstrap-utils
-```
-
-
-

@@ -1,0 +1,3 @@
+- Create class diagram
+- Add support for deriving the datatype (integer, float, string, boolean)
+- Implement unit tests (pytest)

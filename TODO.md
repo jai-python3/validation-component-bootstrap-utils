@@ -1,3 +1,0 @@
-- class diagram
-- support for deriving the datatype (integer, float, string, boolean)
-- unit tests (pytest)
