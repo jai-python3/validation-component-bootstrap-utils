@@ -64,49 +64,38 @@ class Manager:
         logging.info(
             f"Will attempt to generate validation modules for input file '{infile}'"
         )
+        if not os.path.exists(infile):
+            raise Exception(f"file '{infile}' does not exist")
+
         extension = os.path.splitext(infile)[1]
 
         if extension == ".csv":
-            self._generate_validation_modules_for_csv_file(infile)
+            self._generate_validation_modules_for_tsv_file(infile, is_tsv=False)
         elif extension == ".tsv":
-            self._generate_validation_modules_for_tsv_file(infile)
+            self._generate_validation_modules_for_tsv_file(infile, is_tsv=True)
         else:
             logging.error(
                 f"Support does not exist for files with extension '{extension}'"
             )
             sys.exit(1)
 
-    def _generate_validation_modules_for_csv_file(self, infile: str) -> None:
-        """Generate the validation modules for the specified .csv file.
+    def _generate_validation_modules_for_tsv_file(self, infile: str, is_tsv: bool = True) -> None:
+        """Generate the validation modules for the specified .tsv or .csv file.
 
         Args:
-            infile (str): the input .csv file
+            infile (str): the input .tsv or .csv file
+            is_tsv (bool): True if the file is a .tsv file, False if it is a .csv file
         Returns:
             None
         """
-        logging.error(f"NOT YET IMPLEMENTED - unable to process .csv file '{infile}'")
-        sys.exit(1)
-
-    def _generate_validation_modules_for_tsv_file(self, infile: str) -> None:
-        """Generate the validation modules for the specified .tsv file.
-
-        Args:
-            infile (str): the input .tsv file
-        Returns:
-            None
-        """
-
-        if not os.path.exists(infile):
-            raise Exception(f"file '{infile}' does not exist")
-
         header_to_position_lookup = {}
 
-        header_to_position_lookup = self._derive_column_headers_for_tsv_file(infile)
+        header_to_position_lookup = self._derive_column_headers_for_tsv_file(infile, is_tsv=is_tsv)
 
         self._generate_validator_class(header_to_position_lookup, infile)
         self._generate_parser_class(header_to_position_lookup, infile)
         self._generate_main_script(self.data_file_type, self.namespace, infile)
-        self._process_columns_for_tsv_file(infile, header_to_position_lookup)
+        self._process_columns_for_tsv_file(infile, header_to_position_lookup, is_tsv=is_tsv)
 
     def _generate_main_script(self, data_file_type: str, namespace: str, infile: str) -> None:
         """Generate the main script that will be used to execute the validation.
@@ -200,7 +189,10 @@ class Manager:
         self._write_class_file_from_template(template_name, outfile, output, infile)
 
     def _process_columns_for_tsv_file(
-        self, infile: str, header_to_position_lookup: Dict[str, int]
+        self,
+        infile: str,
+        header_to_position_lookup: Dict[str, int],
+        is_tsv: bool = True
     ) -> None:
         """TBD."""
         lookup = {}
@@ -226,8 +218,12 @@ class Manager:
             uniq_val_ctr = 0
             uniq_val_list = []
 
+            delimiter="\t"
+            if not is_tsv:
+                delimiter = ","
+
             with open(infile) as f:
-                reader = csv.reader(f, delimiter="\t")
+                reader = csv.reader(f, delimiter=delimiter)
                 row_ctr = 0
                 for row in reader:
                     row_ctr += 1
@@ -356,7 +352,7 @@ class Manager:
         outfile = os.path.join(self.outdir, f"{column_position}_{basename}.tsv")
         return outfile
 
-    def _derive_column_headers_for_tsv_file(self, infile: str) -> Dict[str, int]:
+    def _derive_column_headers_for_tsv_file(self, infile: str, is_tsv: bool = True) -> Dict[str, int]:
         """Derive the column headers for the input .tsv file.
 
         Args:
@@ -367,8 +363,13 @@ class Manager:
         lookup = {}
         column_ctr = 0
         column_name_to_attribute_name_lookup = {}
+
+        delimiter="\t"
+        if not is_tsv:
+            delimiter = ","
+
         with open(infile) as f:
-            reader = csv.reader(f, delimiter="\t")
+            reader = csv.reader(f, delimiter=delimiter)
             row_ctr = 0
             for row in reader:
                 row_ctr += 1
