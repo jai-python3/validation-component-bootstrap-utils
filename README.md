@@ -1,5 +1,10 @@
 # validation-component-bootstrap-utils
 Collection of scripts and utilities for bootstrapping validation components.
+This software will read a tab-delimited file or a comma-separated file and will generated the following modules:
+- validator.py
+- parser.py
+- record.py
+- file_validation.py
 
 - [validation-component-bootstrap-utils](#validation-component-bootstrap-utils)
   - [Motivation](#motivation)

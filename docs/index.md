@@ -1,11 +1,4 @@
-=================================================
-Utilities for Bootstrapping Validation Components
-=================================================
-
-
-
-Utilities for Bootstrapping Validation Components
-
+# Welcome to Validation Component Bootstrap Utils
 
 Validation Component Bootstrap Utils is a comprehensive set of Python scripts and utilities designed to streamline the process of parsing and validating tab-delimited or comma-separated files. This toolkit automates the generation of essential modules, making it easier to integrate file validation components into your projects.
 
@@ -19,17 +12,13 @@ record.py: The record module defines structures for organizing and representing 
 
 file_validation.py: This module orchestrates the validation and parsing processes, providing a unified interface for users. It acts as the entry point for utilizing the toolkit, promoting simplicity and coherence in handling file operations.
 
+## Commands
 
+The following exported scripts are available:
 
-Features
---------
+- generate-validation-module
 
-The following exported console script is available for use: `bootstrap-validation-component`.
+## References
 
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+* [GitHub](https://github.com/jai-python3/validation-component-bootstrap-utils)
+* [PYPI](https://pypi.org/project/validation-component-bootstrap-utils/)
