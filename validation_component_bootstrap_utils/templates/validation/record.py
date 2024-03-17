@@ -37,9 +37,16 @@ class Invalid{{ lookup[attribute_name].class_name }}Error(Exception):
 
 class Record(pydantic.BaseModel):
     """Class for encapsulating the rows in {{ file_type }} files."""
-    {%- for attribute_name in lookup %}
-    {{ attribute_name }}: {{ lookup[attribute_name].datatype }}
-    {%- endfor %}
+    {% for attribute_name in lookup -%}
+    {{ attribute_name }}: {{ lookup[attribute_name].datatype }} = pydantic.Field(
+        ...,  # Indicates this is a required field
+        {% if lookup[attribute_name].examples %}
+        examples={{ lookup[attribute_name].examples }},
+        {% endif %}
+        description="TBD",
+        frozen=True,
+    )
+    {% endfor %}
 
 
     @pydantic.root_validator(pre=True)

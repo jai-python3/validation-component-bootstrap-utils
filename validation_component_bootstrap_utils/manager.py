@@ -13,6 +13,7 @@ from jinja2 import Environment, FileSystemLoader
 
 DEFAULT_VERBOSE = True
 
+MAX_UNIQUE_VALUES_FOR_EXAMPLES = 4
 
 class Manager:
     """Class for managing the creation of the validation modules."""
@@ -212,6 +213,7 @@ class Manager:
                     "column_name": column_name,
                     "column_position": column_position + 1,
                     "class_name": class_name,
+                    "examples": []
                 }
 
             uniq_val_lookup = {}
@@ -235,9 +237,14 @@ class Manager:
                             continue
                         # print(f"{row=}")
                         val = row[column_position]
+                        if val is None or val == "":
+                            # Skip empty values
+                            continue
                         if val not in uniq_val_lookup:
                             uniq_val_lookup[val] = 0
                             uniq_val_list.append(val)
+                            if (len(lookup[attribute_name]["examples"]) < MAX_UNIQUE_VALUES_FOR_EXAMPLES):
+                                lookup[attribute_name]["examples"].append(val)
                             uniq_val_ctr += 1
                         uniq_val_lookup[val] += 1
 
@@ -499,8 +506,8 @@ class Manager:
     def _determine_datatype(self, values: List[Any]) -> str:
         # Check if the array is not empty
         if not values:
-            logging.error("values array is empty")
-            sys.exit(1)
+            logging.warning("The values array is empty so returning 'str' as the datatype.")
+            return "str"
 
         first_value = values[0]
         first_datatype = None
