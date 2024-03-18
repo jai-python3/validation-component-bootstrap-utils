@@ -248,12 +248,21 @@ class Manager:
                             uniq_val_ctr += 1
                         uniq_val_lookup[val] += 1
 
+            if uniq_val_ctr == 0:
+                lookup[attribute_name]["required"] = False
+            else:
+                lookup[attribute_name]["required"] = True
+
             datatype = self._determine_datatype(uniq_val_list)
 
             if datatype == "different":
                 lookup[attribute_name]["datatype"] = "str"
             else:
                 lookup[attribute_name]["datatype"] = datatype
+
+
+            str_len_min = 0
+            str_len_max = 0
 
             if uniq_val_ctr <= self.max_equality_values:
                 logging.info(
@@ -264,6 +273,28 @@ class Manager:
                 lookup[attribute_name]["uniq_values"] = []
                 for uniq_val in uniq_val_lookup:
                     lookup[attribute_name]["uniq_values"].append(uniq_val)
+                    if datatype == "str":
+                        str_len = len(uniq_val)
+                        if str_len_min == 0 or str_len < str_len_min:
+                            str_len_min = str_len
+                        if str_len > str_len_max:
+                            str_len_max = str_len
+                    elif datatype == "int" or datatype == "float":
+                        if datatype == "int":
+                            uniq_val = int(uniq_val)
+                        elif datatype == "float":
+                            uniq_val = float(uniq_val)
+                        if "min" not in lookup[attribute_name]:
+                            lookup[attribute_name]["min"] = uniq_val
+                        elif uniq_val < lookup[attribute_name]["min"]:
+                            lookup[attribute_name]["min"] = uniq_val
+                        if "max" not in lookup[attribute_name]:
+                            lookup[attribute_name]["max"] = uniq_val
+                        elif uniq_val > lookup[attribute_name]["max"]:
+                            lookup[attribute_name]["max"] = uniq_val
+                if datatype == "str":
+                    lookup[attribute_name]["min"] = str_len_min
+                    lookup[attribute_name]["max"] = str_len_max
 
             self._write_column_report_file(
                 column_name,

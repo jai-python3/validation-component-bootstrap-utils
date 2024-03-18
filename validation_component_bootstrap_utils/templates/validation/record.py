@@ -6,7 +6,7 @@ from enum import Enum
 from typing import Union
 
 
-import pydantic
+from pydantic import BaseModel, constr, confloat, conint, Field
 
 
 {% for attribute_name in lookup %}
@@ -35,16 +35,25 @@ class Invalid{{ lookup[attribute_name].class_name }}Error(Exception):
 
 {% endfor %}
 
-class Record(pydantic.BaseModel):
+class Record(BaseModel):
     """Class for encapsulating the rows in {{ file_type }} files."""
     {% for attribute_name in lookup -%}
-    {{ attribute_name }}: {{ lookup[attribute_name].datatype }} = pydantic.Field(
+    {{ attribute_name }}: {{ lookup[attribute_name].datatype }} = Field(
+        {% if lookup[attribute_name].required -%}
         ...,  # Indicates this is a required field
-        {% if lookup[attribute_name].examples %}
-        examples={{ lookup[attribute_name].examples }},
+        {% endif %}
+        {% if lookup[attribute_name].examples -%}
+        example={{ lookup[attribute_name].examples -}},
         {% endif %}
         description="TBD",
         frozen=True,
+        {% if lookup[attribute_name].datatype == "str" -%}
+        min_length={{ lookup[attribute_name].min }},
+        max_length={{ lookup[attribute_name].max }},
+        {% elif lookup[attribute_name].datatype == "float" or lookup[attribute_name].datatype == "int" -%}
+        ge={{ lookup[attribute_name].min }},
+        le={{ lookup[attribute_name].max }},
+        {% endif %}
     )
     {% endfor %}
 
