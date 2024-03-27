@@ -63,10 +63,25 @@ class Record(BaseModel):
     def is_record_valid(cls, values) -> None:
         # TODO: need to implement the root validator
         # raise InvalidRecordError(message="")
+
+        {% for func in lookup.validation_functions -%}
+        cls.{{ func.name }}(values)
+        {% endfor %}
         return values
 
-    {% for attribute_name in lookup %}
+    {% for func in lookup.validation_functions -%}
+    @classmethod
+    def {{ func.name }}(cls, values):
+        """{{ func.description }}
+        Args:
+            values (Dict[str, Any]): The dictionary containing each of the attributes and their corresponding value.
+        Raises:
+            ValueError
+        """
+        {{ func.definition }}
+    {% endfor %}
 
+    {% for attribute_name in lookup %}
     @pydantic.validator("{{ attribute_name }}")
     @classmethod
     def is_{{ attribute_name }}_valid(cls, value):

@@ -12,14 +12,20 @@ from rich.console import Console
 
 from .manager import Manager
 
+DEFAULT_PROJECT = "validation-component-bootstrap-utils"
+
+DEFAULT_TIMESTAMP = str(datetime.today().strftime("%Y-%m-%d-%H%M%S"))
+
 DEFAULT_TEMPLATE_PATH = os.path.join(
     os.path.dirname(__file__), "templates", "validation"
 )
 
 DEFAULT_OUTDIR = os.path.join(
     "/tmp/",
+    os.getenv("USER"),
+    DEFAULT_PROJECT,
     os.path.splitext(os.path.basename(__file__))[0],
-    str(datetime.today().strftime("%Y-%m-%d-%H%M%S")),
+    DEFAULT_TIMESTAMP,
 )
 
 DEFAULT_CONFIG_FILE = os.path.join(

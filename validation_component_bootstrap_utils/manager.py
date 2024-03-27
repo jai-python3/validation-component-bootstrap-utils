@@ -72,7 +72,7 @@ class Manager:
 
         if extension == ".csv":
             self._generate_validation_modules_for_tsv_file(infile, is_tsv=False)
-        elif extension == ".tsv":
+        elif extension == ".tsv" or extension == ".txt":
             self._generate_validation_modules_for_tsv_file(infile, is_tsv=True)
         else:
             logging.error(
@@ -485,6 +485,12 @@ class Manager:
         """TODO."""
         # Specify the name of the template file
         template_name = "record.py"
+
+        if "validation_functions" in self.config:
+            lookup["validation_functions"] = self.config["validation_functions"]
+            logging.info(f"Added the validation functions to the lookup dictionary from the configuration file '{self.config_file}'")
+        else:
+            logging.warning(f"Did not find any validation functions in the configuration file '{self.config_file}'")
 
         # Create a dictionary with data to be passed to the template
         data = {
