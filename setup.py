@@ -30,7 +30,7 @@ setup(
     description="Utilities for Bootstrapping Validation Components",
     entry_points={
         'console_scripts': [
-            'bootstrap-validation-component=validation_component_bootstrap_utils.generate_validation_module:main',
+            'validation-component-bootstrap-utils-generate-modules=validation_component_bootstrap_utils.generate_validation_module:main',
         ],
     },
     install_requires=requirements,
