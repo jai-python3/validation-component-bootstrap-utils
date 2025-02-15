@@ -50,4 +50,4 @@ Usage:
     The log file is '/tmp/generate_validation_module/2023-12-19-123510/generate_validation_module.log'
     Execution of 
     '/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/generate_validation_module.py' completed
-```
+
