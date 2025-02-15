@@ -5,7 +5,6 @@ import sys
 import click
 import pathlib
 import logging
-import pathlib
 
 from rich.console import Console
 from datetime import datetime
