@@ -1,2 +1,11 @@
 [flake8]
+exclude =
+    .git,
+    docs,
+    venv,
+    .venv,
+    build,
+    dist,
+    site,
+    templates
 ignore = E501, W503
