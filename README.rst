@@ -2,8 +2,6 @@
 Utilities for Bootstrapping Validation Components
 =================================================
 
-
-
 Utilities for Bootstrapping Validation Components
 
 
@@ -21,15 +19,35 @@ file_validation.py: This module orchestrates the validation and parsing processe
 
 
 
-Features
---------
+Exported console script
+-----------------------
 
-The following exported console script is available for use: `bootstrap-validation-component`.
+* bootstrap-validation-component - This script is the main entry point for the Validation Component Bootstrap Utils toolkit. It generates the essential modules for parsing and validating tab-delimited or comma-separated files, streamlining the integration of validation components into your projects.
 
-Credits
--------
+Usage:
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+.. code-block:: bash
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+    bootstrap-validation-component  --infile examples/sample.tsv --data_file_type VCF --namespace su.vcf --verbose                           
+    --config_file was not specified and therefore was set to 
+    '/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/conf/config.yaml'
+    --outdir was not specified and therefore was set to '/tmp/generate_validation_module/2023-12-19-123510'
+    Created output directory '/tmp/generate_validation_module/2023-12-19-123510'
+    --template_path was not specified and therefore was set to 
+    '/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/templates/validation'
+    --logfile was not specified and therefore was set to '/tmp/generate_validation_module/2023-12-19-123510/generate_validation_module.log'
+    Wrote validator.py file '/tmp/generate_validation_module/2023-12-19-123510/su/vcf/validator.py'
+    Wrote validate_file.py file '/tmp/generate_validation_module/2023-12-19-123510/validate_file.py'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/0_#CHROM.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/1_POS.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/2_ID.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/3_REF.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/4_ALT.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/5_QUAL.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/6_FILTER.tsv'
+    Wrote column report file '/tmp/generate_validation_module/2023-12-19-123510/7_INFO.tsv'
+    Wrote record.py file '/tmp/generate_validation_module/2023-12-19-123510/su/vcf/record.py'
+    The log file is '/tmp/generate_validation_module/2023-12-19-123510/generate_validation_module.log'
+    Execution of 
+    '/home/sundaram/projects/validation-component-bootstrap-utils/venv/lib/python3.10/site-packages/validation_component_bootstrap_utils/generate_validation_module.py' completed
+```
